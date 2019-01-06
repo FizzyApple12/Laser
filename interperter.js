@@ -1,7 +1,7 @@
 const fs = require('fs');
-const readline = require('readline');
+var readlineSync = require('readline-sync');
 
-var file = "test.laser"
+var file = "cat.laser"
 var data;
 var data2;
 var data3 = [];
@@ -118,7 +118,11 @@ while (data3[laserY][laserX] != '`') {
             break;
         case '-':
             if (laserDirection == 0) {
-                // No command set
+                if (data3[laserY][laserX + 1] == laserColor) {
+                    laserDirection == 3;
+                } else {
+                    laserDirection == 1;
+                }
             } else if (laserDirection == 1) {
                 var Cnum = '';
                 for (var i = laserX + 1; i < data3[laserY].length - laserX + 1; i++) {
@@ -254,21 +258,6 @@ while (data3[laserY][laserX] != '`') {
                 // No command set
             }
             break;
-        case '-':
-            if (laserDirection == 0) {
-                if (data3[laserY][laserX + 1] == laserColor) {
-                    laserDirection == 3;
-                } else {
-                    laserDirection == 1;
-                }
-            } else if (laserDirection == 1) {
-                // No command set
-            } else if (laserDirection == 2) {
-                // No command set
-            } else if (laserDirection == 3) {
-                // No command set
-            }
-            break;
         case '&':
             if (laserDirection == 0) {
                 var found = false;
@@ -313,7 +302,7 @@ while (data3[laserY][laserX] != '`') {
                     }
                 }
 
-                loops.push({type:0,value:parseFloat(Cnum),x:laserX,y:laserY});
+                loops.push({ type: 0, value: parseFloat(Cnum), x: laserX, y: laserY });
                 loopDepth++;
             } else if (laserDirection == 1) {
                 // No command set
@@ -333,7 +322,7 @@ while (data3[laserY][laserX] != '`') {
                     }
                 }
 
-                loops.push({type:1,value:parseFloat(Cnum),x:laserX,y:laserY});
+                loops.push({ type: 1, value: parseFloat(Cnum), x: laserX, y: laserY });
                 loopDepth++;
             } else if (laserDirection == 1) {
                 // No command set
@@ -354,22 +343,22 @@ while (data3[laserY][laserX] != '`') {
                 }
                 var Cnum2 = '';
                 for (var i = laserX; i < data3[laserY].length - laserX; i++) {
-                    if (!isNaN(data3[laserY-1][laserX + (i - laserX)])) {
-                        Cnum2 += data3[laserY-1][laserX + (i - laserX)];
+                    if (!isNaN(data3[laserY - 1][laserX + (i - laserX)])) {
+                        Cnum2 += data3[laserY - 1][laserX + (i - laserX)];
                     } else {
                         return;
                     }
                 }
                 var Cnum3 = '';
                 for (var i = laserX; i < data3[laserY].length - laserX; i++) {
-                    if (!isNaN(data3[laserY+1][laserX + (i - laserX)])) {
-                        Cnum3 += data3[laserY+1][laserX + (i - laserX)];
+                    if (!isNaN(data3[laserY + 1][laserX + (i - laserX)])) {
+                        Cnum3 += data3[laserY + 1][laserX + (i - laserX)];
                     } else {
                         return;
                     }
                 }
 
-                loops.push({type:2,value:parseFloat(Cnum),x:laserX,y:laserY,top:parseFloat(Cnum2),bottom:parseFloat(Cnum3)});
+                loops.push({ type: 2, value: parseFloat(Cnum), x: laserX, y: laserY, top: parseFloat(Cnum2), bottom: parseFloat(Cnum3) });
                 loopDepth++;
             } else if (laserDirection == 1) {
                 // No command set
@@ -381,33 +370,33 @@ while (data3[laserY][laserX] != '`') {
         case ']':
             if (laserDirection == 0) {
                 if (loopDepth > 0) {
-                    if (loops[loopDepth-1].type == 0) {
-                        if (loops[loopDepth-1].value < laserBrightness) {
-                            laserX = loops[loopDepth-1].x;
-                            laserY = loops[loopDepth-1].y;
+                    if (loops[loopDepth - 1].type == 0) {
+                        if (loops[loopDepth - 1].value < laserBrightness) {
+                            laserX = loops[loopDepth - 1].x;
+                            laserY = loops[loopDepth - 1].y;
                         } else {
-                            loops.splice(loopDepth-1, 1);
+                            loops.splice(loopDepth - 1, 1);
                             loopDepth--;
                         }
-                    } else if (loops[loopDepth-1].type == 1) {
-                        if (loops[loopDepth-1].value > laserBrightness) {
-                            laserX = loops[loopDepth-1].x;
-                            laserY = loops[loopDepth-1].y;
+                    } else if (loops[loopDepth - 1].type == 1) {
+                        if (loops[loopDepth - 1].value > laserBrightness) {
+                            laserX = loops[loopDepth - 1].x;
+                            laserY = loops[loopDepth - 1].y;
                         } else {
-                            loops.splice(loopDepth-1, 1);
+                            loops.splice(loopDepth - 1, 1);
                             loopDepth--;
                         }
                     } else {
-                        if (loops[loopDepth-1].top > loops[loopDepth-1].bottom && loops[loopDepth-1].top > laserBrightness) {
-                            laserBrightness += loops[loopDepth-1].value;
-                            laserX = loops[loopDepth-1].x;
-                            laserY = loops[loopDepth-1].y;
-                        } else if (loops[loopDepth-1].top < loops[loopDepth-1].bottom && loops[loopDepth-1].top < laserBrightness) {
-                            laserBrightness += loops[loopDepth-1].value;
-                            laserX = loops[loopDepth-1].x;
-                            laserY = loops[loopDepth-1].y;
+                        if (loops[loopDepth - 1].top > loops[loopDepth - 1].bottom && loops[loopDepth - 1].top > laserBrightness) {
+                            laserBrightness += loops[loopDepth - 1].value;
+                            laserX = loops[loopDepth - 1].x;
+                            laserY = loops[loopDepth - 1].y;
+                        } else if (loops[loopDepth - 1].top < loops[loopDepth - 1].bottom && loops[loopDepth - 1].top < laserBrightness) {
+                            laserBrightness += loops[loopDepth - 1].value;
+                            laserX = loops[loopDepth - 1].x;
+                            laserY = loops[loopDepth - 1].y;
                         } else {
-                            loops.splice(loopDepth-1, 1);
+                            loops.splice(loopDepth - 1, 1);
                             loopDepth--;
                         }
                     }
@@ -421,6 +410,9 @@ while (data3[laserY][laserX] != '`') {
             } else if (laserDirection == 3) {
                 // No command set
             }
+        case ':':
+            var response = readlineSync.question('Input Text: ');
+            laserColor = response;
     }
     if (laserDirection == 0) {
         laserX++;
