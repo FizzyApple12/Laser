@@ -1,3 +1,3 @@
 {
-  "description": "For this project, I toyed around with writing interpreter code in a higher level language to grasp the understanding of the various concepts in interpeters. It also gave me some skills in optimizing syntax architecture for specific applications, like the higher level speed limitations I was presented with."
+  "description": "This project gave me experience designing and optimizing interpreters for programming languages."
 }
